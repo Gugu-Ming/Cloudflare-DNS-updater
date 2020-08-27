@@ -1,6 +1,7 @@
 import requests
 import json
 import datetime
+import time # Used to set the delay between checks & updates
 import logging
 from config import *
 
@@ -13,13 +14,15 @@ URL_ZONE        = "https://api.cloudflare.com/client/v4/zones/{zone_id}/dns_reco
 logging.basicConfig(filename='updates.log', level=logging.INFO)
 
 def main():
-    ip = get_ip_address()
-    if ip:
-        dns_list_dict = get_dns_list_dict()
-        if dns_list_dict:
-            dns_update_data = get_wanted_dns_list(dns_list_dict)
-            for dns_record in dns_update_data:
-                update_dns(dns_record, ip)
+    while True: # Run This Indefinetly 
+        ip = get_ip_address()
+        if ip:
+            dns_list_dict = get_dns_list_dict()
+            if dns_list_dict:
+                dns_update_data = get_wanted_dns_list(dns_list_dict)
+                for dns_record in dns_update_data:
+                    update_dns(dns_record, ip)
+        time.sleep(delay) 
 
 def get_ip_address():
     try:
